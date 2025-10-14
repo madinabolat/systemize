@@ -1,4 +1,4 @@
-package com.example.peachacademy.model;
+package com.example.systemize.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

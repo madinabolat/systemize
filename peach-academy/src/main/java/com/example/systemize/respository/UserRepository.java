@@ -1,6 +1,6 @@
-package com.example.peachacademy.respository;
+package com.example.systemize.respository;
 
-import com.example.peachacademy.model.User;
+import com.example.systemize.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
