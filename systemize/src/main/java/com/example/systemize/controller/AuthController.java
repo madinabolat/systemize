@@ -20,4 +20,9 @@ public class AuthController {
     public User register(@RequestBody UserRegistrationDto userData){
         return userServiceImpl.registerUser(userData);
     }
+
+    @PostMapping("/ping")
+    public String ping(){
+        return "pong";
+    }
 }
