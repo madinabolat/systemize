@@ -1,6 +1,6 @@
 package com.example.systemize.dto;
 
-public class UserRegistrationDto {
+public class UserLoginDto {
     private String username;
     private String password;
 

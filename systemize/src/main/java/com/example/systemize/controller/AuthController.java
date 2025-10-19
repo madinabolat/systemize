@@ -1,5 +1,6 @@
 package com.example.systemize.controller;
 
+import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
 import com.example.systemize.model.User;
 import com.example.systemize.service.UserServiceImpl;
@@ -19,6 +20,12 @@ public class AuthController {
     @PostMapping("/register")
     public User register(@RequestBody UserRegistrationDto userData){
         return userServiceImpl.registerUser(userData);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody UserLoginDto userData){
+        return userServiceImpl.loginUser(userData);
+
     }
 
     @PostMapping("/ping")
