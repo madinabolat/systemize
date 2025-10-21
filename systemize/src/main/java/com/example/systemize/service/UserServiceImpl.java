@@ -2,6 +2,8 @@ package com.example.systemize.service;
 
 import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
+import com.example.systemize.exception.userAlreadyExistsException;
+import com.example.systemize.exception.userNotFoundException;
 import com.example.systemize.model.User;
 import com.example.systemize.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,9 @@ public class UserServiceImpl implements UserService{
     @Override
     public User registerUser(UserRegistrationDto userData) {
         User user = new User();
-        //check if User exists
+        if (userRepository.findByUsername(userData.getUsername()) != null){
+            throw new userAlreadyExistsException("The user already exists");
+        }
         
         user.setUsername(userData.getUsername());
         user.setPasswordHash(passwordEncoder.encode(userData.getPassword()));
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService{
     public String loginUser(UserLoginDto userData) {
         User user = userRepository.findByUsername(userData.getUsername());
         if (user == null) {
-            System.out.println("user is null");
+            throw new userNotFoundException("No such user exists");
         }
 
         if (passwordEncoder.matches(userData.getPassword(), user.getPasswordHash())){
