@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,10 +22,12 @@ public class UserServiceImplTest {
 
         when(userRepository.findByUsername(userData.getUsername())).thenReturn(null);
         when(passwordEncoder.encode(userData.getPassword())).thenReturn("123encoded");
-        //add invocation? read more
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
         UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
 
         User savedUser = userService.registerUser(userData); //this is returning null - investigate
+
         assertEquals("madina", savedUser.getUsername());
         assertEquals("123encoded", savedUser.getPasswordHash());
     }
