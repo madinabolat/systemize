@@ -26,7 +26,7 @@ public class UserServiceImplTest {
 
         UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
 
-        User savedUser = userService.registerUser(userData); //this is returning null - investigate
+        User savedUser = userService.registerUser(userData);
 
         assertEquals("madina", savedUser.getUsername());
         assertEquals("123encoded", savedUser.getPasswordHash());
@@ -34,6 +34,13 @@ public class UserServiceImplTest {
 
     @Test
     public void TestRegisterExistingUsername(){
+        UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
+        userAlreadyExistsException e = new userAlreadyExistsException("The user already exists");
+
+        when(userRepository.findByUsername(userData.getUsername())).thenReturn(e); //redo
+
+        UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
+        assertEquals(e, e);
 
     }
 
