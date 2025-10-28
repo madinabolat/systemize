@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,15 +34,15 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void TestRegisterExistingUsername(){
+    public void ThrowsExceptionWhenAttemptToRegisterExistingUsername(){
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
-        userAlreadyExistsException e = new userAlreadyExistsException("The user already exists");
-
-        when(userRepository.findByUsername(userData.getUsername())).thenReturn(e); //redo
-
+        User existingUser = new User();
+        existingUser.setUsername("madina");
+        when(userRepository.findByUsername(userData.getUsername())).thenReturn(existingUser); //need to return user
         UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
-        assertEquals(e, e);
-
+        //how to add that userService.registerUser(userData) user already exists?
+        Exception e = assertThrows(userAlreadyExistsException.class, () -> userService.registerUser(userData) );
+        assertEquals("The user already exists", e.getMessage());
     }
 
     @Test
