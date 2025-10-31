@@ -40,10 +40,10 @@ public class UserServiceImplTest {
         existingUser.setUsername("madina");
         when(userRepository.findByUsername(userData.getUsername())).thenReturn(existingUser); //need to return user
         UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
-        //how to add that userService.registerUser(userData) user already exists?
         Exception e = assertThrows(userAlreadyExistsException.class, () -> userService.registerUser(userData) );
         assertEquals("The user already exists", e.getMessage());
     }
+
 
     @Test
     public void TestFindExistingUser(){
