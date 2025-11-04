@@ -4,7 +4,6 @@ import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
 import com.example.systemize.model.User;
 import com.example.systemize.service.UserServiceImpl;
-import com.example.systemize.exception.userAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

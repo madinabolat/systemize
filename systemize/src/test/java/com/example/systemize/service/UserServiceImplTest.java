@@ -1,9 +1,10 @@
 package com.example.systemize.service;
 
 import com.example.systemize.dto.UserRegistrationDto;
-import com.example.systemize.exception.userAlreadyExistsException;
+import com.example.systemize.exception.UserAlreadyExistsException;
 import com.example.systemize.model.User;
 import com.example.systemize.respository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -16,16 +17,19 @@ import static org.mockito.Mockito.when;
 public class UserServiceImplTest {
     UserRepository userRepository = mock(UserRepository.class);
     PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+    UserServiceImpl userService;
+
+    @BeforeEach
+    public void test() {
+        userService = new UserServiceImpl(userRepository, passwordEncoder);
+    }
 
     @Test
-    public void ShouldRegisterNewUserSuccessfully(){
+    public void registersNewUserSuccessfully(){
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
-
         when(userRepository.findByUsername(userData.getUsername())).thenReturn(null);
         when(passwordEncoder.encode(userData.getPassword())).thenReturn("123encoded");
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
 
         User savedUser = userService.registerUser(userData);
 
@@ -34,13 +38,13 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void ThrowsExceptionWhenAttemptToRegisterExistingUsername(){
+    public void throwsExceptionWhenNewUserExists(){
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
         User existingUser = new User();
         existingUser.setUsername("madina");
         when(userRepository.findByUsername(userData.getUsername())).thenReturn(existingUser); //need to return user
-        UserServiceImpl userService = new UserServiceImpl(userRepository, passwordEncoder);
-        Exception e = assertThrows(userAlreadyExistsException.class, () -> userService.registerUser(userData) );
+
+        Exception e = assertThrows(UserAlreadyExistsException.class, () -> userService.registerUser(userData) );
         assertEquals("The user already exists", e.getMessage());
     }
 
