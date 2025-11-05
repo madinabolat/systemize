@@ -8,8 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -38,7 +37,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    public void throwsExceptionWhenNewUserExists(){
+    public void throwsExceptionWhenAttemptingToRegisterExistingUser(){
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
         User existingUser = new User();
         existingUser.setUsername("madina");
@@ -48,18 +47,23 @@ public class UserServiceImplTest {
         assertEquals("The user already exists", e.getMessage());
     }
 
-
     @Test
-    public void TestFindExistingUser(){
+    public void findsExistingUserByUsername(){
+        User existingUser = new User();
+        existingUser.setUsername("madina");
+        when(userRepository.findByUsername("madina")).thenReturn(existingUser); //need to return user
 
+        User foundUser = userService.findByUsername("madina");
+
+        assertEquals(existingUser.getUsername(), foundUser.getUsername());
     }
 
     @Test
-    public void TestFindNonexistentUser(){
+    public void returnsNullWhenUserNotFound(){
+        when(userRepository.findByUsername("madina")).thenReturn(null);
 
+        User result = userService.findByUsername("madina");
+
+        assertNull(result);
     }
-
-
-
-
 }
