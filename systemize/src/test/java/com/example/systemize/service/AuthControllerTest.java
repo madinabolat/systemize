@@ -24,6 +24,7 @@ public class AuthControllerTest {
     MockMvc mockMvc;
     UserServiceImpl userService  = mock(UserServiceImpl.class);
     AuthController authController;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     public void test() {
@@ -45,7 +46,6 @@ public class AuthControllerTest {
     @Test
     public void registersNewUserSuccessfully() throws Exception {
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
-        ObjectMapper objectMapper = new ObjectMapper();
         User newUser = new User();
         newUser.setUsername("madina");
         newUser.setPasswordHash("123hash");
