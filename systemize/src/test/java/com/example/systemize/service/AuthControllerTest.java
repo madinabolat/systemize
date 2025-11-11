@@ -3,6 +3,8 @@ package com.example.systemize.service;
 import com.example.systemize.controller.AuthController;
 import com.example.systemize.dto.UserRegistrationDto;
 import com.example.systemize.model.User;
+
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,9 +16,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class AuthControllerTest {
     MockMvc mockMvc;
@@ -41,23 +43,21 @@ public class AuthControllerTest {
 //    }
 
     @Test
-    public void registersNewUserSuccessfully() throws JsonProcessingException {
+    public void registersNewUserSuccessfully() throws Exception {
         UserRegistrationDto userData = new UserRegistrationDto("madina", "123");
         ObjectMapper objectMapper = new ObjectMapper();
-        String userDataJson = objectMapper.writeValueAsString(userData);
         User newUser = new User();
         newUser.setUsername("madina");
         newUser.setPasswordHash("123hash");
-        when(userService.registerUser(userData)).thenReturn(newUser);
 
-        mockMvc.perform(post("/register")
+        when(userService.registerUser(any(UserRegistrationDto.class))).thenReturn(newUser);
+
+        mockMvc.perform(post("/api/auth/register")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(userDataJson) // why this content is errored out?
+                .content(objectMapper.writeValueAsString(userData))
                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())// no HttpStatus.Created. just status.isOk?
-                .andExpect(model().attributeHasErrors(newUser)); //  .body(userServiceImpl.registerUser(userData)); -> does it return user? or just body?
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.username").value(newUser.getUsername()))
+                .andExpect(jsonPath("$.passwordHash").value(newUser.getPasswordHash()));
     }
-
-
-
 }
