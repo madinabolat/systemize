@@ -11,7 +11,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -20,28 +26,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class AuthControllerTest {
+    @Autowired
     MockMvc mockMvc;
-    UserServiceImpl userService  = mock(UserServiceImpl.class);
-    AuthController authController;
-    ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    public void test() {
-        this.authController = new AuthController(userService);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(authController).build();
-    }
+    @Autowired
+    ObjectMapper objectMapper;
 
-//    POST /api/auth/register: Test successful registration and invalid input.
-//    POST /api/auth/login: Test successful login, incorrect credentials, and non-existent usernames.
-//    Use MockMvc to simulate HTTP requests and mock UserService and PasswordEncoder.
-
-//    @PostMapping("/register")
-//    public ResponseEntity<User> register(@RequestBody UserRegistrationDto userData){
-//        return ResponseEntity
-//                .status(HttpStatus.CREATED)
-//                .body(userServiceImpl.registerUser(userData));
-//    }
+    @MockitoBean
+    UserServiceImpl userService;
 
     @Test
     public void registersNewUserSuccessfully() throws Exception {
@@ -60,4 +55,20 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.username").value(newUser.getUsername()))
                 .andExpect(jsonPath("$.passwordHash").value(newUser.getPasswordHash()));
     }
+
+
+    @Test
+    public void registerFailsDueToInvalidInput() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                "password": "123"
+                                }
+                                """)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+    }
+    
+
 }

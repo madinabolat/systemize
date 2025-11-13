@@ -4,6 +4,7 @@ import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
 import com.example.systemize.model.User;
 import com.example.systemize.service.UserServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserRegistrationDto userData){
+    public ResponseEntity<User> register(@Valid @RequestBody UserRegistrationDto userData){
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(userServiceImpl.registerUser(userData));
