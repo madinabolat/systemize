@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService{
         }
 
         if (passwordEncoder.matches(userData.getPassword(), user.getPasswordHash())){
-            System.out.println("Password matched");
             return "User logged in";
         }
         return "User not found";

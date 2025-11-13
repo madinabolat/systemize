@@ -1,12 +1,15 @@
 package com.example.systemize.service;
 
 import com.example.systemize.controller.AuthController;
+import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
+import com.example.systemize.exception.UserNotFoundException;
 import com.example.systemize.model.User;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
+import com.example.systemize.respository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -69,6 +73,31 @@ public class AuthControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
     }
-    
 
+    @Test
+    public void loginUserSuccessfully() throws Exception {
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+
+        when(userService.loginUser(any(UserLoginDto.class))).thenReturn("User logged in");
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userLoginData))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string("User logged in"));
+    }
+
+    @Test
+    public void incorrectCredentials() {
+        //wrong password
+
+    }
+
+    @Test
+    public void nonExistentUserName() {
+        
+
+    }
 }
