@@ -90,14 +90,26 @@ public class AuthControllerTest {
     }
 
     @Test
+    public void nonExistentUserName() throws Exception {
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+        UserNotFoundException e = new UserNotFoundException("No such user exists");
+
+        when(userService.loginUser(any(UserLoginDto.class))).thenThrow(e);
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(userLoginData))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andExpect(content().string(e.getMessage()));
+    }
+
+    @Test
     public void incorrectCredentials() {
         //wrong password
 
     }
 
-    @Test
-    public void nonExistentUserName() {
-        
 
-    }
 }
