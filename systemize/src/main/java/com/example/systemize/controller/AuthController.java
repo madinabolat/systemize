@@ -51,5 +51,4 @@ public class AuthController {
         return "pong";
     }
 
-    //add general exception handling?
 }
