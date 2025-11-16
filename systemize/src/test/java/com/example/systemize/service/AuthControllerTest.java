@@ -107,8 +107,7 @@ public class AuthControllerTest {
 
     @Test
     public void incorrectCredentials() {
-        //wrong password
-
+        
     }
 
 
