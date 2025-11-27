@@ -3,27 +3,20 @@ package com.example.systemize.service;
 import com.example.systemize.controller.AuthController;
 import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
-import com.example.systemize.exception.UserNotFoundException;
+import com.example.systemize.exception.AuthenticationFailedException;
 import com.example.systemize.model.User;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
-import com.example.systemize.respository.UserRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -92,7 +85,7 @@ public class AuthControllerTest {
     @Test
     public void nonExistentUserName() throws Exception {
         UserLoginDto userLoginData = new UserLoginDto("madina", "123");
-        UserNotFoundException e = new UserNotFoundException("No such user exists");
+        AuthenticationFailedException e = new AuthenticationFailedException("Invalid credentials");
 
         when(userService.loginUser(any(UserLoginDto.class))).thenThrow(e);
 
@@ -107,7 +100,8 @@ public class AuthControllerTest {
 
     @Test
     public void incorrectCredentials() {
-        
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+
     }
 
 

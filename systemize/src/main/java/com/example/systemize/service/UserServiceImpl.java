@@ -3,7 +3,7 @@ package com.example.systemize.service;
 import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
 import com.example.systemize.exception.UserAlreadyExistsException;
-import com.example.systemize.exception.UserNotFoundException;
+import com.example.systemize.exception.AuthenticationFailedException;
 import com.example.systemize.model.User;
 import com.example.systemize.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,15 +36,16 @@ public class UserServiceImpl implements UserService{
     @Override
     public String loginUser(UserLoginDto userData) {
         User user = userRepository.findByUsername(userData.getUsername());
+
         if (user == null) {
-            throw new UserNotFoundException("No such user exists");
+            throw new AuthenticationFailedException("Invalid credentials");
         }
 
-        if (passwordEncoder.matches(userData.getPassword(), user.getPasswordHash())){
-            return "User logged in";
-        } else {
-            return "Wrong password. Please try again.";
+        if (!passwordEncoder.matches(userData.getPassword(), user.getPasswordHash())){
+            throw new AuthenticationFailedException("Wrong password. Please try again.");
         }
+
+        return "User logged in";
     }
 
     @Override

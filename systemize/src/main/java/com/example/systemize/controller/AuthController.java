@@ -2,16 +2,14 @@ package com.example.systemize.controller;
 
 import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
-import com.example.systemize.exception.UserNotFoundException;
+import com.example.systemize.exception.AuthenticationFailedException;
 import com.example.systemize.model.User;
 import com.example.systemize.service.UserServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -37,12 +35,11 @@ public class AuthController {
                     .status(HttpStatus.OK)
                     .body(userServiceImpl.loginUser(userData));
         }
-        catch (UserNotFoundException e)
+        catch (AuthenticationFailedException e)
         {
             return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
+                    .status(HttpStatus.UNAUTHORIZED)
                     .body(e.getMessage());
-
         }
     }
 
