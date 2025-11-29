@@ -83,7 +83,7 @@ public class AuthControllerTest {
     }
 
     @Test
-    public void nonExistentUserName() throws Exception {
+    public void returnsUnauthorizedWhenInvalidCredentials() throws Exception {
         UserLoginDto userLoginData = new UserLoginDto("madina", "123");
         AuthenticationFailedException e = new AuthenticationFailedException("Invalid credentials");
 
@@ -94,15 +94,7 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(userLoginData))
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isNotFound())
+                .andExpect(status().isUnauthorized())
                 .andExpect(content().string(e.getMessage()));
     }
-
-    @Test
-    public void incorrectCredentials() {
-        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
-
-    }
-
-
 }

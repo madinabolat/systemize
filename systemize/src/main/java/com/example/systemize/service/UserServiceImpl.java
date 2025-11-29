@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService{
         }
 
         if (!passwordEncoder.matches(userData.getPassword(), user.getPasswordHash())){
-            throw new AuthenticationFailedException("Wrong password. Please try again.");
+            throw new AuthenticationFailedException("Invalid credentials");
         }
 
         return "User logged in";

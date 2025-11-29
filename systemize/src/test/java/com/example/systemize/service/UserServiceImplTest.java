@@ -66,4 +66,22 @@ public class UserServiceImplTest {
 
         assertNull(result);
     }
+
+    @Test
+    public void loginSucceedsWithCorrectCredentials() {
+        // Test when user exists AND password matches
+    }
+
+    @Test
+    public void loginFailsWhenUserNotFound() {
+        // Test throws AuthenticationFailedException when user is null
+    }
+
+    @Test
+    public void loginFailsWhenPasswordIsWrong() {
+        // Test throws AuthenticationFailedException when password doesn't match
+    }
+
+
+    
 }
