@@ -1,6 +1,8 @@
 package com.example.systemize.service;
 
+import com.example.systemize.dto.UserLoginDto;
 import com.example.systemize.dto.UserRegistrationDto;
+import com.example.systemize.exception.AuthenticationFailedException;
 import com.example.systemize.exception.UserAlreadyExistsException;
 import com.example.systemize.model.User;
 import com.example.systemize.respository.UserRepository;
@@ -69,17 +71,32 @@ public class UserServiceImplTest {
 
     @Test
     public void loginSucceedsWithCorrectCredentials() {
-        // Test when user exists AND password matches
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+        User user = new User();
+        user.setUsername("madina");
+        when(userRepository.findByUsername(userLoginData.getUsername())).thenReturn(user);
+        when(passwordEncoder.matches(userLoginData.getPassword(),user.getPasswordHash())).thenReturn(true);
+
+        assertEquals("User logged in", userService.loginUser(userLoginData));
     }
 
     @Test
     public void loginFailsWhenUserNotFound() {
-        // Test throws AuthenticationFailedException when user is null
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+        when(userRepository.findByUsername(userLoginData.getUsername())).thenReturn(null);
+        Exception e = assertThrows(AuthenticationFailedException.class, () -> userService.loginUser(userLoginData) );
+        assertEquals("Invalid credentials", e.getMessage());
     }
 
     @Test
     public void loginFailsWhenPasswordIsWrong() {
-        // Test throws AuthenticationFailedException when password doesn't match
+        UserLoginDto userLoginData = new UserLoginDto("madina", "123");
+        User user = new User();
+        user.setUsername("madina");
+        when(userRepository.findByUsername(userLoginData.getUsername())).thenReturn(user);
+        when(passwordEncoder.matches(userLoginData.getPassword(),user.getPasswordHash())).thenReturn(false);
+        Exception e = assertThrows(AuthenticationFailedException.class, () -> userService.loginUser(userLoginData) );
+        assertEquals("Invalid credentials", e.getMessage());
     }
 
 
